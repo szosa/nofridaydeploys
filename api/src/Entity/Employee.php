@@ -3,11 +3,33 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
 use App\Repository\EmployeeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ApiResource]
+#[ApiResource(
+    operations: [new Post()]
+)]
+#[ApiResource(
+    uriTemplate: '/companies/{companyId}/employees/{id}',
+    operations: [new Get()],
+    uriVariables: [
+        'companyId' => new Link(toProperty: 'company', fromClass: Company::class),
+        'id' => new Link(fromClass: Employee::class),
+    ]
+)]
+#[ApiResource(
+    uriTemplate: '/companies/{companyId}/employees',
+    operations: [new GetCollection()],
+    uriVariables: [
+        'companyId' => new Link(toProperty: 'company', fromClass: Company::class),
+    ]
+)]
 class Employee
 {
     #[ORM\Id]
